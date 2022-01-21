@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import {Route, Routes, useNavigate} from 'react-router-dom';
+import ExcursionsList from "./pages/ExcursionsList";
+import ExcursionPage from "./pages/ExcursionPage";
+import LoginPage from "./pages/LoginPage";
+import {useEffect, useState} from "react";
+import {refresh, verify} from "./utils/auth";
+import RegisterPage from "./pages/RegisterPage";
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const navigate = useNavigate();
+
+    function handleClick() {
+        navigate("/home", {replace: true});
+    }
+
+    const [token, setToken] = useState()
+    useEffect(() => {
+        refresh(token, setToken)
+    }, [])
+    return (<div className={"container"}>
+        <div className="row">
+            <div className="six columns">
+                <h1>Гиды с экскурсиями</h1>
+            </div>
+            <div className="three columns">
+                <button onClick={() => navigate("/", {replace: true})}>Home</button>
+            </div>
+            <div className="three columns">
+                <button onClick={() => navigate("/login", {replace: true})}>Login</button>
+            </div>
+        </div>
+        <Routes>
+            <Route path="/" element={<ExcursionsList/>}/>
+            <Route path="/excursion/:id" element={<ExcursionPage token={token}/>}/>
+            <Route path="/login" element={<LoginPage setToken={setToken}/>}/>
+            <Route path="/signup" element={<RegisterPage setToken={setToken}/>}/>
+        </Routes>
+    </div>);
 }
 
 export default App;
